@@ -1,7 +1,3 @@
-'''
-Scripts by @tann9949 (github.com/tann9949)
-'''
-
 import argparse
 import multiprocessing as mp
 import re
@@ -41,7 +37,7 @@ def format_repeat(text: str) -> str:
                 last_word: str = tokenized_text[i-1];
                 for c in word:
                     if c == "ๆ":
-                        formatted_text.append(last_word);
+                        formatted_text.append(" "+last_word);
                 formatted_text.append(word.replace("ๆ", ""));
             else:
                 current_word = splitted_word[0];
@@ -50,13 +46,13 @@ def format_repeat(text: str) -> str:
                         current_word: str = w;
                         formatted_text.append(w);
                     else:
-                        formatted_text.append(current_word);
+                        formatted_text.append(" "+current_word);
         else:
             formatted_text.append(word)
     return "".join(formatted_text);
 
 
-def correct_sentence(sentence: str, custom_dict: Dict[str, str] = {}) -> None:
+def correct_sentence(sentence: str, custom_dict: Dict[str, str] = {}) -> str:
     """Correct misspell sentence according to the following rule
     1. check whether แ is spelled by เ + เ
     2. check whether ำ is spelled by  ํ + า
@@ -85,7 +81,7 @@ def correct_sentence(sentence: str, custom_dict: Dict[str, str] = {}) -> None:
         print(f"Correct ํ + า => ำ");
     if "ๆ" in sentence:
         sentence = format_repeat(sentence);
-        print("ๆ Replaced")
+#         print("ๆ Replaced")
     # correct #3
     corrected_sentence: str = sentence;
     for i in range(len(sentence) - 1):
@@ -95,7 +91,7 @@ def correct_sentence(sentence: str, custom_dict: Dict[str, str] = {}) -> None:
                 corrected_sentence: List[str] = list(corrected_sentence);
                 corrected_sentence[i] = next_char;
                 corrected_sentence[i+1] = char;
-                corrected_sentence: str = str(corrected_sentence);
+                corrected_sentence: str = str("".join(corrected_sentence));
                 print(f"Corrected `{char}` + `{next_char}` => `{next_char}` + `{char}`");
         if char == "ํ" and next_char in tonal_marks and sentence[i+2] == "า":
             corrected_sentence = corrected_sentence.replace(f"ํ{next_char}า", f"{next_char}ำ");
